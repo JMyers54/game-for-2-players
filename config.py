@@ -1,0 +1,4 @@
+VENTANA_ANCHO = 1200
+VENTANA_ALTO = 700
+COLOR_FONDO = "black"
+FONDO_IMG = "cancha.gif"
