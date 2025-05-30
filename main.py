@@ -1,59 +1,62 @@
 from ventana import crear_ventana
-from jugadores import crear_jugador
 from pelota import crear_pelota
-from marcador import crear_marcador, actualizar_marcador
+from jugadores import crear_jugador
+from marcador import crear_marcador
 from controles import configurar_controles
 
-class Juego(): 
-    def __init__(self): 
-        self.ventana = crear_ventana()
-        self.jugador1 = crear_jugador(-545, "blue")
-        self.jugador2 = crear_jugador(540, "red")
-        self.pelota = crear_pelota()
-        self.marcador = crear_marcador()
-        self.configurar_controles(self.ventana, self.jugador1, self.jugador2)
+# Crear ventana
+ventana = crear_ventana()
 
-        marcador1 = 0
-        marcador2 = 0
+# Crear elementos del juego
+pelota = crear_pelota()
+jugador1 = crear_jugador(-545, "blue")
+jugador2 = crear_jugador(540, "red")
+marcador, marcador1, marcador2 = crear_marcador()
 
-        while True:
-            self.ventana.update()
+# Configurar controles
+configurar_controles(ventana, jugador1, jugador2)
 
-            self.pelota.setx(self.pelota.xcor() + self.pelota.dx)
-            self.pelota.sety(self.pelota.ycor() + self.pelota.dy)
+# Bucle principal del juego
+while True:
+    ventana.update()
 
-            # Rebote arriba/abajo
-            if self.pelota.ycor() > 305 or self.pelota.ycor() < -305:
-                self.pelota.dy *= -1
+    pelota.setx(pelota.xcor() + pelota.dx)
+    pelota.sety(pelota.ycor() + pelota.dy)
 
-            # Gol
-            if self.pelota.xcor() > 600:
-                self.pelota.goto(0, 0)
-                self.pelota.dx *= -1
-                marcador1 += 1
-                actualizar_marcador(self.marcador, marcador1, marcador2)
+    # Rebote arriba/abajo
+    if pelota.ycor() > 305 or pelota.ycor() < -305:
+        pelota.dy *= -1
 
-            if self.pelota.xcor() < -600:
-                self.pelota.goto(0, 0)
-                self.pelota.dx *= -1
-                marcador2 += 1
-                actualizar_marcador(self.marcador, marcador1, marcador2)
+    # Puntos
+    if pelota.xcor() > 600:
+        pelota.goto(0, 0)
+        pelota.dx *= -1
+        marcador1 += 1
+        marcador.clear()
+        marcador.write(f"{marcador1}    {marcador2}", align="center", font=("Courier", 40, "bold"))
 
-            # Rebote en paletas
-            if ((self.pelota.xcor() > 520 and self.pelota.xcor() < 550) and 
-                (self.pelota.ycor() < self.jugador2.ycor() + 60 and self.pelota.ycor() > self.jugador2.ycor() - 60)):
-                self.pelota.dx *= -1
+    if pelota.xcor() < -600:
+        pelota.goto(0, 0)
+        pelota.dx *= -1
+        marcador2 += 1
+        marcador.clear()
+        marcador.write(f"{marcador1}    {marcador2}", align="center", font=("Courier", 40, "bold"))
 
-            if ((self.pelota.xcor() < -520 and self.pelota.xcor() > -550) and 
-                (self.pelota.ycor() < self.jugador1.ycor() + 60 and self.pelota.ycor() > self.jugador1.ycor() - 60)):
-                self.pelota.dx *= -1
+    # Limites para jugadores
+    if jugador1.ycor() > 300:
+        jugador1.sety(290)
+    if jugador1.ycor() < -300:
+        jugador1.sety(-290)
+    if jugador2.ycor() > 300:
+        jugador2.sety(290)
+    if jugador2.ycor() < -300:
+        jugador2.sety(-290)
 
-            # Limitar movimiento de jugadores
-            if self.jugador1.ycor() > 300:
-                self.jugador1.sety(290)
-            if self.jugador1.ycor() < -300:
-                self.jugador1.sety(-290)
-            if self.jugador2.ycor() > 300:
-                self.jugador2.sety(290)
-            if self.jugador2.ycor() < -300:
-                self.jugador2.sety(-290)
+    # Colisión con paletas
+    if ((pelota.xcor() > 520 and pelota.xcor() < 550)
+            and (jugador2.ycor() - 60 < pelota.ycor() < jugador2.ycor() + 60)):
+        pelota.dx *= -1
+
+    if ((pelota.xcor() < -520 and pelota.xcor() > -550)
+            and (jugador1.ycor() - 60 < pelota.ycor() < jugador1.ycor() + 60)):
+        pelota.dx *= -1
