@@ -8,8 +8,4 @@ def crear_marcador():
     marcador.hideturtle()
     marcador.goto(0, 255)
     marcador.write("0    0", align="center", font=("Courier", 40, "bold"))
-    return marcador
-
-def actualizar_marcador(marcador, m1, m2):
-    marcador.clear()
-    marcador.write(f"{m1}    {m2}", align="center", font=("Courier", 40, "bold"))
+    return marcador, 0, 0
